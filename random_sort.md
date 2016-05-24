@@ -25,8 +25,10 @@ Random sort 보통 bogosort나 stupid sort, slow sort로 불리는 바보같은 
 
 아래는 Python을 사용하여 실제로 랜덤하게 주어진 배열을 정렬하는 유전알고리즘을 구성하는 간단한 방법을 담고 있습니다.
 
+## 만들어보기
 ---
 
+### 개체를 나타내는 클래스
 일단 하나의 개체를 나타내는 클래스를 만들어 봅시다.
 ```
 class DNA:
@@ -34,6 +36,7 @@ class DNA:
     self.gene = gene
 ```
 
+### 각 개체의 적합도
 여기에 이 개체의 적합도를 `@property`를 이용하여 만들어봅시다.
 이 적합도를 어떻게 측정하느냐는 바꿀 수 있습니다.
 아래의 코드는 어느 자리에 있어야 하는 X와 그 자리에 있는 숫자 Y의 차 abs(X-Y)를 SIZE에서(리스트의 길이) 빼주는것으로 정의되어있습니다.
@@ -42,6 +45,8 @@ class DNA:
   def fitness(self) -> int:
     return reduce(lambda x, y: x+y, list(map(lambda x, y: SIZE-abs(x-y), SORTED, self.gene)))
 ```
+
+### 세대를 나타내는 클래스
 이제 이 개체들을 여럿 모은 하나의 세대를 나타내는 클래스를 꾸며봅시다.
 초기화 할 때 위의 DNA들로 이루어진 리스트를 넣어 초기화 합니다.
 ```
@@ -50,12 +55,14 @@ class Generation:
     self.DNA_list = DNA_list
 ```
 
+### 세대의 적합도
 이 Generation의 평균 적합도는 산술, 기하 평균을 사용해도 되지만 numpy의 mean를 사용해 간단히 만들수도 있습니다.
 ```
   def fitness(self):
     return mean([dna.fitness for dna in self.DNA_list])
 ```
 
+### 다음 세대 만들기
 기본적인 구성은 끝났으니 이제 다음 세대를 만드는 과정을 구현해야 합니다.
 한 세대에서 다음 세대로 가는 '진화'를 담당하는 함수를 만들어봅시다. 다음 세대의 개체들을 먼저 만든후 새로운 Generation를 다음 세대의 개체들로 초기화 해서 반환해 주면 되겠죠.
 ```
@@ -63,14 +70,15 @@ class Generation:
     childs = [this.child() for _ in range(CHILD_SIZE)]
     return Generation(childs)
 ```
-여기서 CHILD_SIZE는 한 세대를 구성하는 개체의 수를 지정합니다.
+*여기서 CHILD_SIZE는 한 세대를 구성하는 개체의 수를 지정합니다.*
 
 그러면 이제 자식을 생성하는 child 함수도 꾸며야합니다.
 
 이 자식을 어떻게 생성할 것이냐가 문제입니다.
 어느정도는 가장 좋은 개체들을, 어느 정도는 교차-변이를 통해 교배된 자식들을 넘겨줘야합니다.
 
-우선 가장 좋은 개체들을 찾아보죠
+#### 가장 적합도가 높은 개체 찾기
+우선 가장 적합도가 높은 개체들을 찾아보죠
 각 개체는 DNA 클래스로 만들어져 있고 우리는 fitness라는 적합도를 구하는 속성을 만들어 두었기 때문에 아래와 같이 간단하게 가장 높은 적합도를 가지는 개체를 찾아낼 수 있습니다.
 ```
   def best(self):
