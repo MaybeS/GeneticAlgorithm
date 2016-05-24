@@ -3,7 +3,7 @@
 
 ## Module
 - numpy
-	-mean
+	- mean
 - matplotlib
 	- pyplot
 	- animation
