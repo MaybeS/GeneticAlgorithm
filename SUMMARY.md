@@ -1,4 +1,4 @@
 # Summary
 
-* Random Sort
+* [Random Sort](random_sort.md)
 
