@@ -43,7 +43,7 @@ class DNA:
 ```
   @property
   def fitness(self) -> int:
-    return reduce(lambda x, y: x+y, list(map(lambda x, y: SIZE-abs(x-y), SORTED, self.gene)))
+    return reduce(lambda x, y: x+y, list(map(lambda x, y: DNA_SIZE-abs(x-y), SORTED, self.gene)))
 ```
 
 ### 세대를 나타내는 클래스
