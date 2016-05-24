@@ -22,3 +22,45 @@ Random sort 보통 bogosort나 stupid sort, slow sort로 불리는 바보같은 
 
 이러한 준비가 끝나면 실제로 코드를 통해서 우리의 알고리즘이 어떤 무작위 배열을 정렬된 배열로
 진화시킬 수 있을지 실험해 봅시다.
+
+아래는 Python을 사용하여 실제로 랜덤하게 주어진 배열을 정렬하는 유전알고리즘을 구성하는 간단한 방법을 담고 있습니다.
+
+---
+
+일단 하나의 개체를 나타내는 클래스를 만들어 봅시다.
+```
+class DNA:
+  def __init__(self, gene):
+    self.gene = gene
+```
+
+여기에 이 개체의 적합도를 `@property`를 이용하여 만들어봅시다.
+이 적합도를 어떻게 측정하느냐는 바꿀 수 있습니다.
+아래의 코드는 어느 자리에 있어야 하는 X와 그 자리에 있는 숫자 Y의 차 abs(X-Y)를 SIZE에서(리스트의 길이) 빼주는것으로 정의되어있습니다.
+```
+  @property
+  def fitness(self) -> int:
+    return reduce(lambda x, y: x+y, list(map(lambda x, y: SIZE-abs(x-y), SORTED, self.gene)))
+```
+이제 이 개체들을 여럿 모은 하나의 세대를 나타내는 클래스를 꾸며봅시다.
+초기화 할 때 위의 DNA들로 이루어진 리스트를 넣어 초기화 합니다.
+```
+class Generation:
+  def __init__(self, DNA_list):
+    self.DNA_list = DNA_list
+```
+
+이 Generation의 평균 적합도는 산술, 기하 평균을 사용해도 되지만 numpy의 mean를 사용해 만들수도 있습니다.
+```
+  def fitness(self):
+    return mean([dna.fitness for dna in self.DNA_list])
+```
+
+기본적인 구성은 끝났으니 이제 다음 세대를 만드는 과정을 구현해야 합니다.
+한 세대에서 다음 세대로 가는 '진화'를 담당하는 함수를 만들어봅시다. 이 함수는 아무래도 다음 세대를 반환하는게 좋겠죠. 그러면 우리는 Generation에서 생성자에 담긴 개체들로 초기화되도록 만들었으니 다음 세대의 개체들을 먼저 만든후 새로운 Generation를 다음 세대의 개체들로 초기화 해서 반환해 주면 되겠죠.
+```
+  def evolution(self):
+    childs = this.child()
+    return Generation(childs)
+```
+
